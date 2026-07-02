@@ -88,4 +88,7 @@ Remaining files in the codebase are for testing and set up.
 
 
 ## AI Usage
+<!-- how you used AI tools during codebase navigation and debugging, what they helped you understand, and where you verified or overrode their output -->
+I mostly used AI to help me get around the codebase quicker and to double check my thinking. Since every route delegates to a service function, I leaned on it to trace which service a route was actually calling so I could jump straight to the right file instead of reading through everything. It also helped me understand the streak logic, specifically why excluding "day 6" was causing the reset, and it confirmed the way the playlist list was being sliced with `songs[:-1]`. In each case I still went and looked at the code myself to make sure the explanation matched what was really there before I changed anything.
 
+After making my fixes I used AI to verify they actually worked and didn't break anything else. For the streak and playlist bugs I cross referenced with the pytest suite, and for the rating notification I had it confirm the notification was created for the right user and that a user wouldn't get notified for rating their own song. One place I made my own call was on the rating notification, where AI pointed out that re-rating a song would send another notification each time. I decided to leave it as is since it matched how the add to playlist function already behaved, so the two stay consistent.
