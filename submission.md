@@ -75,6 +75,17 @@ Remaining files in the codebase are for testing and set up.
 <!-- What did you change and why does that change fix the root cause? What related functionality did you check afterward to confirm you didn't break anything? -->
 * **Your fix and side-effect check** — I removed exclusion of "day 6" from the if statement and simplified the conditional to increment when days since last listened is 1. This is the logical condition to avoid unnecessary skipping.
 
+### #4	- I got notified when a friend added my song to a playlist but not when they rated it
+<!-- What steps did you take to confirm the bug exists before touching any code? What inputs, sequence of actions, or data condition triggered the behavior? -->
+* **How you reproduced it** - using the command `curl -X POST http://127.0.0.1:5000/songs/<song_id>/rate` to rate a song shared by another user I could see this error in action. When I then checked that user's notifications with `curl http://127.0.0.1:5000/users/<user_id>/notifications` nothing showed up, even though doing the same thing by adding the song to a playlist did create a notification. That difference confirmed the bug existed.
+<!-- Which files did you look at? What was your navigation path? What moment made you confident you'd found the right place — not just a suspicious area, but the specific cause? -->
+* **How you found the root cause** — So I started in `users.py` to observe the routes which connect to notifications. I noticed that the notification was obtained by the function `get_notification()` so I jumped to that file `notification_service.py`. I noticed that there was specific functions for both add to a playlist and rating one and compared them. It was clear there was an issue with notification when I saw they handled this differently.
+<!-- In plain English, explain exactly what was wrong. Not "there was a bug in the streak logic" — explain the specific condition, comparison, or missing step that caused the problem. -->
+* **The root cause** — The cause of the bug was the fact that there was no notification logic in the function for rating a song, unlike that what can be found in the function for adding a song to a playlist.
+
+<!-- What did you change and why does that change fix the root cause? What related functionality did you check afterward to confirm you didn't break anything? -->
+* **Your fix and side-effect check** — I added logic to notify a user if there song was rated by someone else to the `rate_song()` function. I checked the notification output with print statements when a song is rated.
+
 
 ## AI Usage
 
