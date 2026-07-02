@@ -64,6 +64,17 @@ Remaining files in the codebase are for testing and set up.
 <!-- What did you change and why does that change fix the root cause? What related functionality did you check afterward to confirm you didn't break anything? -->
 * **Your fix and side-effect check** — I took away the exclusion of the last song and simply had it take from the original list `songs`. I checked this fix with the test suite and everything worked fine.
 
+### #1	- My listening streak keeps resetting
+<!-- What steps did you take to confirm the bug exists before touching any code? What inputs, sequence of actions, or data condition triggered the behavior? -->
+* **How you reproduced it** - using the command `curl http://127.0.0.1:5000/<user_id>/streak` I could see this error in action. I also used the pytest test suite to cross reference since one of the tests isolated this issue. The pytest also revealed that the issue seems to arise when going between weekend days.
+<!-- Which files did you look at? What was your navigation path? What moment made you confident you'd found the right place — not just a suspicious area, but the specific cause? -->
+* **How you found the root cause** — So I started in `users.py` to observe the routes which connect to the streak_service functions. I noticed that the streak was obtain by the function `get_streak(user_id)` so I jumped to that function definition in `streak_service.py`. The issue wasn't there, but I was able to find it in `update_listening_streak()`, where I was certain the relevant logic was held.
+<!-- In plain English, explain exactly what was wrong. Not "there was a bug in the streak logic" — explain the specific condition, comparison, or missing step that caused the problem. -->
+* **The root cause** — The cause of the bug was found in the logic for incrementing streak. It was originally looking at if it has been only one day since the user last listened to something, but also intentionally excluding the scenario when the current day is "day 6".
+
+<!-- What did you change and why does that change fix the root cause? What related functionality did you check afterward to confirm you didn't break anything? -->
+* **Your fix and side-effect check** — I removed exclusion of "day 6" from the if statement and simplified the conditional to increment when days since last listened is 1. This is the logical condition to avoid unnecessary skipping.
+
 
 ## AI Usage
 
